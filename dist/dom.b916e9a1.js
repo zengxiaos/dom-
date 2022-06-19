@@ -105,18 +105,89 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   return newRequire;
 })({"dom.js":[function(require,module,exports) {
 window.dom = {
-    find: function find(selector) {
-        return document.querySelectorAll(selector);
+    create: function create(string) {
+        var container = document.createElement('template'); // template可以用来容纳所以的标签和字符串（）里的内容需要加上引号，表示是字符串 
+        container.innerHTML = string.trim(); //trim函数可以去除所创建的文本元素
+        return container.content.firstChild;
+    },
+    after: function after(node, node2) {
+        //node2插入到node的前面
+        node.parentNode.insertBefore(node2, node.nextSibling);
+    },
+    before: function before(node, node2) {
+        node.parentNode.insertBefore(node2, node);
+    },
+    append: function append(parent, node) {
+        parent.appendChild(node);
+    },
+    wrap: function wrap(node, parent) {
+        dom.before(node, parent);
+        dom.append(parent, node);
+    },
+    remove: function remove(node) {
+        //node.remove()较新
+        node.parentNode.removeChild(node);
+        return node;
+    },
+    empty: function empty(node) {
+        //去除该节点的所有子节点-
+        // node.innerHTML("")这种无法返回所删除的节点
+        var childNodes = node.childNodes; // const childNodes=node.childNodes该语法的高级写法
+
+        var array = [];
+        var x = node.firstChild;
+        while (x) {
+            array.push(dom.remove(node.firstChild));
+            x = node.firstChild;
+        }
+        return array;
+        // for(let i=0;i<childNodes.length;i++){
+        //     dom.remove(childNodes[i])
+        //     array.push(childNodes[i])
+        // }childNodes会实时更新，其长度是变化的因此在这里不适应故而采取while循环
+        // return array
+    },
+    attr: function attr(node, name, value) {
+        if (arguments.length === 3) {
+            node.setAttribute(name, value);
+        }
+        if (arguments.length === 2) {
+            return node.getAttribute(name);
+        }
+    },
+    text: function text(node, string) {
+        if (arguments.length === 2) {
+            if ('innerText' in node) {
+                node.innerText = string;
+            } else {
+                node.textContent = string;
+            }
+            if (arguments.length === 1) {
+                if ('innerText' in node) {
+                    return node.innerText;
+                } else {
+                    return node.textContent;
+                }
+            }
+        }
+    },
+    html: function html(node, string) {
+        if (arguments.length === 2) {
+            node.innerHTML = string;
+        } else if (arguments.length === 1) {
+            return node.innerHTML;
+        }
     },
     style: function style(node, name, value) {
         if (arguments.length === 3) {
             node.style[name] = value;
         }
         if (arguments.length === 2) {
-            if (typeof name === "string") {
+            if (typeof name === 'string') {
                 var B = node.style[name];
                 return B;
-            }if (name instanceof Object) {
+            }
+            if (name instanceof Object) {
                 var object = name;
                 for (var key in object) {
                     node.style[key] = object[key];
@@ -124,12 +195,65 @@ window.dom = {
             }
         }
     },
+
+    class: {
+        add: function add(node, className) {
+            node.classList.add(className);
+        },
+        remove: function remove(node, className) {
+            node.classList.remove(className);
+        },
+        has: function has(node, className) {
+            node.classList.has(className);
+        }
+    },
+    on: function on(node, eventName, fn) {
+        node.addEventListener(eventName, fn);
+    },
+    off: function off(node, eventName, fn) {
+        node.removeEventListener(eventName, fn);
+    },
+    find: function find(selector, scope) {
+        return (document || scope).querySelectorAll(selector);
+    },
+    children: function children(node) {
+        return node.children;
+    },
+    parent: function parent(node) {
+        return node.parent;
+    },
+    siblings: function siblings(node) {
+        return Array.from(node.parentNode.children).filter(function (n) {
+            return n !== node;
+        });
+    },
+    next: function next(node) {
+        var x = node.nestSibling;
+        while (x && x.nodeType === 3) {
+            x = x.nestSibling;
+        }
+        return x;
+    },
+    previous: function previous(node) {
+        var x = node.previousSibling;
+        while (x && x.nodeType === 3) {
+            x = x.previousSibling;
+        }
+        return x;
+    },
     each: function each(array, fn) {
         Array.from(array);
         var i = void 0;
         for (var _i = 0; _i < array.length; _i++) {
             fn.call(null, array[_i]);
         }
+    },
+    index: function index(node) {
+        var list = dom.children(node.parentNode);
+        for (var _i2 = 0; _i2 < list.length; _i2++) {
+            if (list[_i2] = node) break;
+        }
+        return i;
     }
 };
 },{}],"..\\..\\..\\AppData\\Local\\Yarn\\Data\\global\\node_modules\\parcel\\src\\builtins\\hmr-runtime.js":[function(require,module,exports) {
@@ -161,7 +285,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '57754' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '58397' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

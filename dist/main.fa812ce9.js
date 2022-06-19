@@ -104,16 +104,43 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   // Override the current require with this new one
   return newRequire;
 })({"main.js":[function(require,module,exports) {
-var div = dom.find('#test>.red')[0];
-console.log(div);
+var newdiv = dom.create('<div>你好</div>');
+console.log(newdiv);
 
-dom.style(div, 'color', 'red');
+dom.after(test, newdiv); //这些节点都是需要先在js线程中创建出来
 
-var divList = dom.find('.red');
-console.log(divList);
-dom.each(divList, function (n) {
-  return console.log(n);
-});
+var div2 = dom.create('<div id="parent"></div>');
+dom.wrap(test, div2);
+var nodes = dom.empty(window.empty);
+console.log(nodes);
+
+dom.attr(test, 'title', 'hi');
+var title = dom.attr(test, 'title');
+console.log(title);
+dom.text(test, '你好这是传入的文本');
+
+dom.style(test, { border: '1px solid red', color: 'blue' });
+
+dom.class.add(test, 'red');
+
+var fn = function fn() {
+    console.log('点击了');
+};
+dom.on(test, 'click', fn);
+dom.off(test, 'click', fn);
+
+var divtest = dom.find('#test')[0];
+console.log(divtest);
+var divbule = dom.find('.bule', divtest);
+console.log(divbule);
+// const div = dom.find('#test>.red')[0]
+// console.log(div)
+
+// dom.style(div, `color`,`red`)
+
+// const divList = dom.find('.red')
+// console.log(divList)
+// dom.each(divList, (n)=> console.log(n))
 },{}],"..\\..\\..\\AppData\\Local\\Yarn\\Data\\global\\node_modules\\parcel\\src\\builtins\\hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -143,7 +170,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '57754' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '58397' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
